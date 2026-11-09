@@ -1,1 +1,183 @@
-﻿
+﻿USE [APPC]
+GO
+/****** Object:  Table [dbo].[Invitations]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Invitations](
+	[InvitationId] [int] IDENTITY(1,1) NOT NULL,
+	[OrganizationId] [int] NOT NULL,
+	[Email] [nvarchar](256) NOT NULL,
+	[RoleId] [int] NOT NULL,
+	[TokenHash] [nvarchar](256) NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
+	[InvitedByUserId] [int] NOT NULL,
+	[CreatedAt] [datetime2](0) NOT NULL,
+	[ExpiryAt] [datetime2](0) NOT NULL,
+	[AcceptedAt] [datetime2](0) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[InvitationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Organizations]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Organizations](
+	[OrganizationId] [int] IDENTITY(1,1) NOT NULL,
+	[OrganizationName] [nvarchar](100) NULL,
+	[OrganizationCode] [nvarchar](100) NULL,
+	[Status] [nvarchar](100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[OrganizationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[OrganizationUsers]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OrganizationUsers](
+	[OrganizationUserId] [int] IDENTITY(1,1) NOT NULL,
+	[OrganizationId] [int] NULL,
+	[UserId] [int] NULL,
+	[RoleId] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[OrganizationUserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Permissions]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Permissions](
+	[PermissionId] [int] IDENTITY(1,1) NOT NULL,
+	[PermissionKey] [varchar](20) NOT NULL,
+	[Module] [varchar](100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PermissionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[RolePermissions]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[RolePermissions](
+	[RoleId] [int] NOT NULL,
+	[PermissionId] [int] NOT NULL,
+ CONSTRAINT [PK_RolePermissions] PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC,
+	[PermissionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Roles]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[RoleId] [int] IDENTITY(1,1) NOT NULL,
+	[OrganizationId] [int] NULL,
+	[RoleName] [varchar](100) NOT NULL,
+	[IsSystemRole] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 09-11-2026 15:26:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[UserId] [int] IDENTITY(1,1) NOT NULL,
+	[FullName] [varchar](100) NULL,
+	[Email] [varchar](100) NOT NULL,
+	[PasswordHash] [varchar](max) NULL,
+	[PasswordSalt] [varchar](max) NULL,
+	[IsActive] [bit] NULL,
+	[PlatformRole] [nvarchar](30) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Invitations] ADD  DEFAULT (sysutcdatetime()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Roles] ADD  DEFAULT ((1)) FOR [IsSystemRole]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Invitations]  WITH CHECK ADD  CONSTRAINT [FK_Invitation_Organization] FOREIGN KEY([OrganizationId])
+REFERENCES [dbo].[Organizations] ([OrganizationId])
+GO
+ALTER TABLE [dbo].[Invitations] CHECK CONSTRAINT [FK_Invitation_Organization]
+GO
+ALTER TABLE [dbo].[Invitations]  WITH CHECK ADD  CONSTRAINT [FK_Invitations_Roles] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[Roles] ([RoleId])
+GO
+ALTER TABLE [dbo].[Invitations] CHECK CONSTRAINT [FK_Invitations_Roles]
+GO
+ALTER TABLE [dbo].[Invitations]  WITH CHECK ADD  CONSTRAINT [FK_Invitations_Users] FOREIGN KEY([InvitedByUserId])
+REFERENCES [dbo].[Users] ([UserId])
+GO
+ALTER TABLE [dbo].[Invitations] CHECK CONSTRAINT [FK_Invitations_Users]
+GO
+ALTER TABLE [dbo].[OrganizationUsers]  WITH CHECK ADD  CONSTRAINT [FK_OrganizationUsers_Organizations] FOREIGN KEY([OrganizationId])
+REFERENCES [dbo].[Organizations] ([OrganizationId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrganizationUsers] CHECK CONSTRAINT [FK_OrganizationUsers_Organizations]
+GO
+ALTER TABLE [dbo].[OrganizationUsers]  WITH CHECK ADD  CONSTRAINT [FK_OrganizationUsers_Roles] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[Roles] ([RoleId])
+GO
+ALTER TABLE [dbo].[OrganizationUsers] CHECK CONSTRAINT [FK_OrganizationUsers_Roles]
+GO
+ALTER TABLE [dbo].[OrganizationUsers]  WITH CHECK ADD  CONSTRAINT [FK_OrganizationUsers_Users] FOREIGN KEY([UserId])
+REFERENCES [dbo].[Users] ([UserId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrganizationUsers] CHECK CONSTRAINT [FK_OrganizationUsers_Users]
+GO
+ALTER TABLE [dbo].[RolePermissions]  WITH CHECK ADD  CONSTRAINT [FK_RolePermission_Roles] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[Roles] ([RoleId])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[RolePermissions] CHECK CONSTRAINT [FK_RolePermission_Roles]
+GO
+ALTER TABLE [dbo].[RolePermissions]  WITH CHECK ADD  CONSTRAINT [FK_RolePermissions_Permissions] FOREIGN KEY([PermissionId])
+REFERENCES [dbo].[Permissions] ([PermissionId])
+GO
+ALTER TABLE [dbo].[RolePermissions] CHECK CONSTRAINT [FK_RolePermissions_Permissions]
+GO
+ALTER TABLE [dbo].[Roles]  WITH CHECK ADD  CONSTRAINT [FK_Roles_Organizations] FOREIGN KEY([OrganizationId])
+REFERENCES [dbo].[Organizations] ([OrganizationId])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Roles] CHECK CONSTRAINT [FK_Roles_Organizations]
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'When User Accept Inivitation & Join Organization then Record Also Store in OrganizationUser Table' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrganizationUsers', @level2type=N'CONSTRAINT',@level2name=N'FK_OrganizationUsers_Organizations'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An organization has a role within the organization itself, so the Role table requires an OrganizationId foreign key to map to that role in the organization.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Roles', @level2type=N'CONSTRAINT',@level2name=N'FK_Roles_Organizations'
+GO
