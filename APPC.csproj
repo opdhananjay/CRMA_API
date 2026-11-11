@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Models\Leads\" />
-    <Folder Include="Repositories\Interfaces\" />
+    <Folder Include="Models\Platform\" />
     <Folder Include="Services\Interfaces\" />
   </ItemGroup>
 
