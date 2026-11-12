@@ -11,10 +11,10 @@ namespace APPC.Controllers
         [HttpPost("create-organization")]
         public async Task<IActionResult> CreateOrganization()
         {
-            // Implement the logic to create an organization here
+            // Implement the logic to create an organization here - 
             return Ok(new { message = "Organization created successfully" });
         }
-            
+
 
 
     }

@@ -1,6 +1,6 @@
 ﻿USE [APPC]
 GO
-/****** Object:  Table [dbo].[Invitations]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[Invitations]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -22,7 +22,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Organizations]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[Organizations]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -38,7 +38,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[OrganizationUsers]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[OrganizationUsers]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -54,7 +54,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Permissions]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[Permissions]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -69,7 +69,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[RolePermissions]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[RolePermissions]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -84,7 +84,7 @@ CREATE TABLE [dbo].[RolePermissions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Roles]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[Roles]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -100,7 +100,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 09-11-2026 15:26:44 ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 12-11-2026 20:38:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -176,6 +176,27 @@ ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Roles] CHECK CONSTRAINT [FK_Roles_Organizations]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_get_user_by_email]    Script Date: 12-11-2026 20:38:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_get_user_by_email] (
+	@Email NVARCHAR(50)
+)
+AS
+BEGIN 
+	
+	SET NOCOUNT ON;
+
+	SELECT UserId,FullName,Email,PasswordHash,PasswordSalt,IsActive,PlatformRole FROM dbo.Users
+	WHERE Email = @Email
+
+END
+
+
+
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'When User Accept Inivitation & Join Organization then Record Also Store in OrganizationUser Table' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrganizationUsers', @level2type=N'CONSTRAINT',@level2name=N'FK_OrganizationUsers_Organizations'
 GO
